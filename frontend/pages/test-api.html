@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test - Officer & Notes Data</h1>
+    <button onclick="testAPI()">Test API</button>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            try {
+                console.log('Fetching reports...');
+                const response = await fetch('http://localhost:3000/reports');
+                const reports = await response.json();
+
+                console.log('Reports received:', reports);
+
+                let html = '<h2>Reports with Officer/Notes:</h2>';
+                reports.forEach(report => {
+                    html += `
+                        <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+                            <h3>Report ${report.id}</h3>
+                            <p><strong>Status:</strong> ${report.status}</p>
+                            <p><strong>Officer:</strong> ${report.assignedOfficer ? report.assignedOfficer.name + ' (' + report.assignedOfficer.department + ')' : 'None'}</p>
+                            <p><strong>Notes:</strong> ${report.notes && report.notes.length > 0 ? report.notes.length + ' notes' : 'None'}</p>
+                            ${report.notes && report.notes.length > 0 ? '<ul>' + report.notes.map(note => '<li>' + note.text + '</li>').join('') + '</ul>' : ''}
+                        </div>
+                    `;
+                });
+
+                document.getElementById('result').innerHTML = html;
+
+            } catch (error) {
+                document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                console.error('API test error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

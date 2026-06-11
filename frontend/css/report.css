@@ -1,0 +1,637 @@
+:root {
+  --saffron: #ff9933;
+  --white: #ffffff;
+  --green: #138808;
+  --blue: #000080;
+}
+
+body {
+  font-family: Poppins, sans-serif;
+  margin: 0;
+  background: #f5f5f5;
+}
+
+header {
+  background: linear-gradient(to right, var(--saffron), var(--white), var(--green));
+  padding: 20px;
+  text-align: center;
+  border-bottom: 4px solid var(--blue);
+  color: var(--blue);
+}
+
+main {
+  max-width: 600px;
+  margin: 25px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  border-left: 5px solid var(--saffron);
+  padding-left: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: 2px solid var(--blue);
+  border-radius: 10px;
+}
+
+button {
+  width: 100%;
+  background: linear-gradient(to right, var(--saffron), var(--white), var(--green));
+  padding: 12px;
+  border: none;
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+#previewImage {
+  display: none;
+  width: 180px;
+  margin-top: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+#status {
+  color: green;
+  margin-top: 15px;
+  font-weight: bold;
+  text-align: center;
+}
+
+footer {
+  padding: 12px;
+  text-align: center;
+  background: var(--blue);
+  color: white;
+  margin-top: 20px;
+}
+
+/* Small button styles */
+.btn-sm-primary,
+.btn-sm-warning {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-sm-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-sm-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-sm-warning {
+  background: #f39c12;
+  color: white;
+}
+
+.btn-sm-warning:hover {
+  background: #e67e22;
+  transform: translateY(-1px);
+}
+
+.btn-sm-info {
+  background: #3498db;
+  color: white;
+}
+
+.btn-sm-info:hover {
+  background: #2980b9;
+  transform: translateY(-1px);
+}
+
+/* Manual address input styling */
+#manualAddress {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+#manualAddress:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+
+.otp-section {
+  margin-top: 15px;
+  padding: 15px;
+  background: rgba(255, 107, 53, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 107, 53, 0.2);
+}
+
+.otp-input-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.otp-input-wrapper input,
+#otpInput {
+  flex: 3 !important;
+  min-width: 250px !important;
+  max-width: 350px;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-align: center;
+  transition: border-color 0.3s ease;
+}
+
+.otp-input-wrapper input:focus,
+#otpInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.verify-btn,
+#verifyOtpBtn {
+  padding: 8px 12px !important;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12px !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: auto !important;
+  width: auto !important;
+}
+
+.verify-btn:hover:not(:disabled),
+#verifyOtpBtn:hover:not(:disabled) {
+  background: #059669;
+  transform: scale(1.05);
+}
+
+.verify-btn:disabled,
+#verifyOtpBtn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.otp-status {
+  margin-top: 10px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+  animation: slideInUp 0.5s ease-out;
+}
+
+.otp-status.success {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+  color: #065f46;
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.otp-status.error {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+  color: #dc2626;
+  border: 2px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.otp-status.info {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+  color: #1d4ed8;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  animation: slideInUp 0.5s ease-out, glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2), 0 0 20px rgba(59, 130, 246, 0.1);
+  }
+
+  to {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3), 0 0 30px rgba(59, 130, 246, 0.2);
+  }
+}
+
+.resend-timer {
+  margin-top: 10px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.resend-btn {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.resend-btn:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* Phone Input Wrapper */
+.phone-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.phone-input-wrapper input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.phone-input-wrapper input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+/* Send OTP Button Styles */
+#sendOtpBtn {
+  align-self: flex-start;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+#sendOtpBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+#sendOtpBtn:disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+#sendOtpBtn.sending {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+#sendOtpBtn.verified {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  cursor: default;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* OTP Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 16px 16px 0 0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal-close {
+  font-size: 24px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.modal-close:hover {
+  opacity: 0.7;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.otp-info {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.otp-info p {
+  margin: 5px 0;
+  color: #6b7280;
+}
+
+.phone-display {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-top: 8px;
+}
+
+.otp-input-section {
+  margin-bottom: 20px;
+}
+
+.otp-input-section label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.otp-input-group {
+  display: flex;
+  gap: 12px;
+}
+
+.otp-input-group input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-align: center;
+  transition: border-color 0.3s ease;
+}
+
+.otp-input-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.modal-verify-btn {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-verify-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.modal-verify-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.modal-status {
+  margin: 15px 0;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.modal-status.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #065f46;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.modal-status.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.modal-resend-btn {
+  background: transparent;
+  color: #667eea;
+  border: 1px solid #667eea;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.modal-resend-btn:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+}
+
+.modal-resend-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-timer {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Report page background */
+body {
+  background-image: url('../assets/images/road-texture.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  margin: 0;
+  padding: 0;
+}
+
+.report-main {
+  position: relative;
+  min-height: 100vh;
+}
+
+.report-main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 1;
+}
+
+.report-main>* {
+  position: relative;
+  z-index: 2;
+}
+
+/* MOBILE OPTIMIZATIONS */
+@media (max-width: 600px) {
+  .report-main {
+    margin: 15px;
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  main {
+    padding: 15px;
+    margin: 15px auto;
+  }
+
+  .file-upload-wrapper {
+    height: 100px;
+  }
+
+  .otp-input-wrapper {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .otp-input-wrapper input,
+  #otpInput {
+    min-width: 0 !important;
+    flex: 1 !important;
+    width: 100% !important;
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  .verify-btn,
+  #verifyOtpBtn {
+    width: 100% !important;
+    padding: 12px !important;
+    margin-top: 8px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+}

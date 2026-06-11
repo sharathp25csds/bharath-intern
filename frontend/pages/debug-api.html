@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .endpoint { margin: 20px 0; padding: 15px; border: 2px solid #ddd; border-radius: 8px; }
+        .endpoint h3 { margin-top: 0; color: #333; }
+        .result { background: #f5f5f5; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>API Debug - Officer & Notes Data</h1>
+
+    <div class="endpoint">
+        <h3>🔍 User Dashboard API (/reports)</h3>
+        <button onclick="testUserAPI()">Test User API</button>
+        <div id="userResult" class="result">Click button to test...</div>
+    </div>
+
+    <div class="endpoint">
+        <h3>👨‍💼 Admin Dashboard API (/admin/reports)</h3>
+        <button onclick="testAdminAPI()">Test Admin API</button>
+        <div id="adminResult" class="result">Click button to test...</div>
+    </div>
+
+    <div class="endpoint">
+        <h3>📊 Comparison</h3>
+        <div id="comparison" class="result">Test both APIs to compare...</div>
+    </div>
+
+    <script>
+        async function testUserAPI() {
+            try {
+                const response = await fetch('http://localhost:3000/reports?t=' + Date.now());
+                const data = await response.json();
+
+                let html = `<strong>Status:</strong> ${response.status}<br>`;
+                html += `<strong>Reports Count:</strong> ${data.length}<br><br>`;
+
+                data.forEach((report, index) => {
+                    html += `<strong>Report ${index + 1} (ID: ${report.id}):</strong><br>`;
+                    html += `Status: ${report.status}<br>`;
+                    html += `Officer: ${report.assignedOfficer ? report.assignedOfficer.name + ' (' + report.assignedOfficer.department + ')' : 'NONE'}<br>`;
+                    html += `Notes: ${report.notes && report.notes.length > 0 ? report.notes.length + ' notes' : 'NONE'}<br>`;
+
+                    if (report.notes && report.notes.length > 0) {
+                        html += 'Note texts: ';
+                        report.notes.forEach(note => {
+                            html += `"${note.text}" `;
+                        });
+                        html += '<br>';
+                    }
+
+                    html += '<br>';
+                });
+
+                document.getElementById('userResult').innerHTML = html;
+
+            } catch (error) {
+                document.getElementById('userResult').innerHTML = `<span style="color: red;">Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testAdminAPI() {
+            try {
+                const response = await fetch('http://localhost:3000/admin/reports?t=' + Date.now());
+                const data = await response.json();
+
+                let html = `<strong>Status:</strong> ${response.status}<br>`;
+                html += `<strong>Reports Count:</strong> ${data.length}<br><br>`;
+
+                data.forEach((report, index) => {
+                    html += `<strong>Report ${index + 1} (ID: ${report.id}):</strong><br>`;
+                    html += `Status: ${report.status}<br>`;
+                    html += `Officer: ${report.assignedOfficer ? report.assignedOfficer.name + ' (' + report.assignedOfficer.department + ')' : 'NONE'}<br>`;
+                    html += `Notes: ${report.notes && report.notes.length > 0 ? report.notes.length + ' notes' : 'NONE'}<br>`;
+
+                    if (report.notes && report.notes.length > 0) {
+                        html += 'Note texts: ';
+                        report.notes.forEach(note => {
+                            html += `"${note.text}" `;
+                        });
+                        html += '<br>';
+                    }
+
+                    html += '<br>';
+                });
+
+                document.getElementById('adminResult').innerHTML = html;
+
+            } catch (error) {
+                document.getElementById('adminResult').innerHTML = `<span style="color: red;">Error: ${error.message}</span>`;
+            }
+        }
+
+        function compareAPIs() {
+            const userResult = document.getElementById('userResult').textContent;
+            const adminResult = document.getElementById('adminResult').textContent;
+
+            let comparison = '<strong>Comparison Results:</strong><br>';
+
+            if (userResult.includes('assignedOfficer') && adminResult.includes('assignedOfficer')) {
+                comparison += '✅ Both APIs return officer data<br>';
+            } else {
+                comparison += '❌ Officer data mismatch<br>';
+            }
+
+            if (userResult.includes('notes') && adminResult.includes('notes')) {
+                comparison += '✅ Both APIs return notes data<br>';
+            } else {
+                comparison += '❌ Notes data mismatch<br>';
+            }
+
+            document.getElementById('comparison').innerHTML = comparison;
+        }
+
+        // Auto-compare when both results are loaded
+        setInterval(() => {
+            const userResult = document.getElementById('userResult').textContent;
+            const adminResult = document.getElementById('adminResult').textContent;
+
+            if (userResult !== 'Click button to test...' && adminResult !== 'Click button to test...') {
+                compareAPIs();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

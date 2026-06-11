@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple OTP Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .phone-input-wrapper { display: flex; gap: 10px; margin-bottom: 10px; }
+        input, button { padding: 8px; }
+        button:disabled { opacity: 0.5; }
+        .otp-section { display: none; margin-top: 10px; }
+        .otp-input-wrapper { display: flex; gap: 10px; margin-bottom: 10px; }
+        .otp-status { margin-top: 5px; padding: 5px; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h2>Simple OTP Test</h2>
+
+    <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <div class="phone-input-wrapper">
+            <input type="tel" id="phone" name="phone" placeholder="Enter phone number" required />
+            <button type="button" id="sendOtpBtn" disabled>Send OTP</button>
+        </div>
+        <div id="otpSection" class="otp-section">
+            <div class="otp-input-wrapper">
+                <input type="text" id="otpInput" placeholder="Enter 6-digit OTP" maxlength="6" />
+                <button type="button" id="verifyOtpBtn" class="verify-btn" disabled>Verify</button>
+            </div>
+            <div id="otpStatus" class="otp-status"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentPhoneNumber = '';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Simple OTP test initialized");
+
+            const phoneInput = document.getElementById("phone");
+            const sendOtpBtn = document.getElementById("sendOtpBtn");
+            const otpInput = document.getElementById("otpInput");
+            const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+
+            console.log("Elements found:", { phoneInput, sendOtpBtn, otpInput, verifyOtpBtn });
+
+            // Phone input validation
+            phoneInput.addEventListener("input", function() {
+                console.log("Phone input changed:", this.value);
+                const phoneNumber = this.value.trim();
+                const cleanPhone = phoneNumber.replace(/\s+/g, '');
+                const isValidPhone = /^\d{10}$/.test(cleanPhone) || /^(\+91|91)?[6-9]\d{9}$/.test(cleanPhone);
+                sendOtpBtn.disabled = !isValidPhone;
+                console.log("Phone valid:", isValidPhone);
+            });
+
+            // Send OTP
+            sendOtpBtn.addEventListener("click", async function() {
+                console.log("Send OTP clicked");
+                const phoneNumber = phoneInput.value.trim();
+
+                sendOtpBtn.disabled = true;
+                sendOtpBtn.textContent = "Sending...";
+
+                try {
+                    console.log("Making request to /send-otp");
+                    const response = await fetch('/send-otp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phoneNumber })
+                    });
+
+                    const result = await response.json();
+                    console.log("Response:", result);
+
+                    if (result.success) {
+                        currentPhoneNumber = phoneNumber;
+                        document.getElementById("otpSection").style.display = "block";
+                        otpInput.focus();
+
+                        if (result.demoOTP) {
+                            showOtpStatus(`Demo OTP: ${result.demoOTP}`, 'info');
+                        } else {
+                            showOtpStatus('OTP sent successfully!', 'success');
+                        }
+                    } else {
+                        showOtpStatus(result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showOtpStatus('Failed to send OTP', 'error');
+                } finally {
+                    sendOtpBtn.disabled = false;
+                    sendOtpBtn.textContent = "Send OTP";
+                }
+            });
+
+            // OTP input validation
+            otpInput.addEventListener("input", function() {
+                verifyOtpBtn.disabled = this.value.trim().length !== 6;
+            });
+
+            // Verify OTP
+            verifyOtpBtn.addEventListener("click", async function() {
+                const otp = otpInput.value.trim();
+
+                verifyOtpBtn.disabled = true;
+                verifyOtpBtn.textContent = "Verifying...";
+
+                try {
+                    const response = await fetch('/verify-otp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phoneNumber: currentPhoneNumber, otp })
+                    });
+
+                    const result = await response.json();
+                    console.log("Verify response:", result);
+
+                    if (result.success) {
+                        showOtpStatus('Phone verified successfully!', 'success');
+                        phoneInput.disabled = true;
+                        sendOtpBtn.disabled = true;
+                        sendOtpBtn.textContent = "Verified ✓";
+                        sendOtpBtn.style.backgroundColor = "green";
+                    } else {
+                        showOtpStatus(result.message, 'error');
+                        otpInput.value = '';
+                        verifyOtpBtn.disabled = true;
+                    }
+                } catch (error) {
+                    console.error('Verify error:', error);
+                    showOtpStatus('Verification failed', 'error');
+                } finally {
+                    verifyOtpBtn.disabled = false;
+                    verifyOtpBtn.textContent = "Verify";
+                }
+            });
+        });
+
+        function showOtpStatus(message, type) {
+            const statusEl = document.getElementById("otpStatus");
+            statusEl.textContent = message;
+            statusEl.className = `otp-status ${type}`;
+        }
+    </script>
+</body>
+</html>
+
+
+

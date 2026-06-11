@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - RoadWatch</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --admin-primary: #1e40af;
+            --admin-secondary: #3b82f6;
+            --admin-accent: #f59e0b;
+            --admin-success: #10b981;
+            --admin-error: #ef4444;
+            --admin-warning: #f59e0b;
+            --admin-muted: #6b7280;
+            --admin-bg: #f8fafc;
+            --admin-card: #ffffff;
+            --admin-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --admin-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background: var(--admin-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .admin-navbar {
+            background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--admin-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-navbar h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .admin-navbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-navbar .user-info span {
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--admin-card);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--admin-shadow);
+            border-left: 4px solid var(--admin-primary);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            color: var(--admin-muted);
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--admin-primary);
+            margin: 0;
+        }
+
+        .stat-card .change {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .stat-card .change.positive {
+            color: var(--admin-success);
+        }
+
+        .stat-card .change.negative {
+            color: var(--admin-error);
+        }
+
+        .filters-section {
+            background: var(--admin-card);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--admin-shadow);
+            margin-bottom: 30px;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: var(--admin-muted);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--admin-primary);
+        }
+
+        .apply-filters-btn {
+            background: var(--admin-primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .apply-filters-btn:hover {
+            background: var(--admin-secondary);
+        }
+
+        .reports-section {
+            background: var(--admin-card);
+            border-radius: 15px;
+            box-shadow: var(--admin-shadow);
+            overflow: hidden;
+        }
+
+        .reports-header {
+            padding: 25px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .reports-header h2 {
+            margin: 0;
+            color: var(--admin-primary);
+            font-size: 24px;
+        }
+
+        .reports-count {
+            background: var(--admin-bg);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--admin-muted);
+        }
+
+        .reports-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .report-item {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 25px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            align-items: center;
+            gap: 20px;
+            transition: background 0.3s;
+        }
+
+        .report-item:hover {
+            background: var(--admin-bg);
+        }
+
+        .report-item:last-child {
+            border-bottom: none;
+        }
+
+        .report-info h4 {
+            margin: 0 0 5px 0;
+            color: var(--admin-primary);
+            font-size: 16px;
+        }
+
+        .report-info p {
+            margin: 0;
+            color: var(--admin-muted);
+            font-size: 14px;
+        }
+
+        .report-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-working {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status-resolved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .report-date {
+            color: var(--admin-muted);
+            font-size: 14px;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-view {
+            background: var(--admin-primary);
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: var(--admin-secondary);
+        }
+
+        .btn-update {
+            background: var(--admin-success);
+            color: white;
+        }
+
+        .btn-update:hover {
+            background: #059669;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 25px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--admin-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--admin-muted);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .report-detail-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--admin-muted);
+        }
+
+        .detail-value {
+            color: var(--admin-primary);
+        }
+
+        .report-image {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .update-form {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--admin-muted);
+        }
+
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--admin-primary);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-actions {
+            padding: 25px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn-cancel {
+            background: #f3f4f6;
+            color: var(--admin-muted);
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--admin-muted);
+        }
+
+        .error {
+            background: #fef2f2;
+            color: var(--admin-error);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--admin-error);
+        }
+
+        .success {
+            background: #f0fdf4;
+            color: var(--admin-success);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--admin-success);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 0 15px;
+            }
+
+            .report-item {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .reports-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-navbar {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .admin-navbar .user-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* ===========================
+           REPAIR TRACKING STYLES
+           =========================== */
+
+        .repair-tracking-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 15px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .repair-tracking-section h4 {
+            margin: 0 0 20px 0;
+            color: #1e40af;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .repair-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .repair-progress::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 50px;
+            right: 50px;
+            height: 3px;
+            background: #e5e7eb;
+            z-index: 1;
+        }
+
+        .repair-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .repair-step .step-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            border: 3px solid #e5e7eb;
+        }
+
+        .repair-step.completed .step-icon {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .repair-step.current .step-icon {
+            background: #f59e0b;
+            border-color: #f59e0b;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .repair-step.pending .step-icon {
+            background: white;
+            border-color: #e5e7eb;
+            color: #9ca3af;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .repair-step .step-name {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+
+        .repair-step .step-time {
+            font-size: 10px;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        .step-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .step-controls button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #3b82f6;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .step-controls button:hover:not(:disabled) {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .step-controls button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="admin-navbar">
+        <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+        <div class="user-info">
+            <button onclick="loadDashboard()"
+                style="margin-right: 10px; background: #10b981; border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer;">
+                <i class="fas fa-download"></i> Load Reports
+            </button>
+            <span><i class="fas fa-user-shield"></i> Admin</span>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div id="stats-section" class="stats-grid">
+            <div class="stat-card">
+                <h3><i class="fas fa-clipboard-list"></i> Total Reports</h3>
+                <div class="value" id="total-reports">0</div>
+                <div class="change positive">+12% from last month</div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-clock"></i> Pending</h3>
+                <div class="value" id="pending-reports">0</div>
+                <div class="change">Requires attention</div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-tools"></i> In Progress</h3>
+                <div class="value" id="working-reports">0</div>
+                <div class="change">Being addressed</div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-check-circle"></i> Resolved</h3>
+                <div class="value" id="resolved-reports">0</div>
+                <div class="change positive">+8% completion rate</div>
+            </div>
+        </div>
+
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label><i class="fas fa-filter"></i> Status Filter</label>
+                    <select id="status-filter">
+                        <option value="">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Working">Working</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-search"></i> Search Location</label>
+                    <input type="text" id="search-input" placeholder="Search by location...">
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-calendar"></i> Date Range</label>
+                    <select id="date-filter">
+                        <option value="">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button class="apply-filters-btn" onclick="applyFilters()">
+                        <i class="fas fa-filter"></i> Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="reports-section">
+            <div class="reports-header">
+                <h2><i class="fas fa-list"></i> Pothole Reports</h2>
+                <div class="reports-count" id="reports-count">Loading...</div>
+            </div>
+            <div id="reports-container">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Loading reports...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Detail Modal -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-alt"></i> Report Details</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration - Auto-detect backend server
+        const API_BASE_URL = (() => {
+          const hostname = window.location.hostname;
+          const port = window.location.port;
+          
+          if (port === '3000') {
+            return `http://${hostname}:3000`;
+          }
+          
+          if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            return 'http://localhost:3000';
+          }
+          
+          return window.location.origin;
+        })();
+
+        async function apiCall(endpoint, options = {}) {
+          const url = `${API_BASE_URL}${endpoint}`;
+          const response = await fetch(url, options);
+          return response;
+        }
+
+        console.log('Admin dashboard script loaded');
+        let allReports = [];
+        let filteredReports = [];
+
+        // Load dashboard on page load
+        window.addEventListener('DOMContentLoaded', function () {
+            console.log('Admin dashboard loaded');
+            // For presentation, auto-login as admin
+            localStorage.setItem('adminToken', 'presentation-token');
+            localStorage.setItem('adminUser', JSON.stringify({ username: 'admin', role: 'super_admin' }));
+            loadDashboard();
+        });
+
+        async function verifyToken(token) {
+            try {
+                const response = await apiCall('/verify-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token })
+                });
+                return response.ok;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        async function loadDashboard() {
+            console.log('loadDashboard called');
+            try {
+                console.log('Fetching reports...');
+                const reportsResponse = await apiCall('/admin/reports');
+
+                if (!reportsResponse.ok) {
+                    throw new Error(`HTTP error! status: ${reportsResponse.status}`);
+                }
+
+                const reportsData = await reportsResponse.json();
+                console.log('Reports received:', reportsData);
+
+                allReports = reportsData;
+
+                // Sample officers data
+                window.officers = [
+                    { id: 1, name: "Rajesh Kumar", department: "Road Maintenance" },
+                    { id: 2, name: "Priya Sharma", department: "Infrastructure" },
+                    { id: 3, name: "Amit Patel", department: "Engineering" },
+                    { id: 4, name: "Sunita Verma", department: "Quality Control" },
+                    { id: 5, name: "Vikram Singh", department: "Emergency Repairs" },
+                    { id: 6, name: "Meera Joshi", department: "Traffic Management" },
+                    { id: 7, name: "Suresh Reddy", department: "Urban Planning" },
+                    { id: 8, name: "Anjali Gupta", department: "Environmental" }
+                ];
+
+                updateStats();
+                displayReports(allReports);
+
+            } catch (error) {
+                console.error('Error in loadDashboard:', error);
+                document.getElementById('reports-container').innerHTML = `
+                    <div style="color: red; padding: 20px; text-align: center;">
+                        <i class="fas fa-exclamation-triangle"></i><br>
+                        Error: ${error.message}<br>
+                        Check browser console for details.
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats() {
+            try {
+                const total = allReports.length;
+                const pending = allReports.filter(r => r.status === 'Pending').length;
+                const working = allReports.filter(r => r.status === 'Working').length;
+                const resolved = allReports.filter(r => r.status === 'Resolved').length;
+
+                const totalEl = document.getElementById('total-reports');
+                const pendingEl = document.getElementById('pending-reports');
+                const workingEl = document.getElementById('working-reports');
+                const resolvedEl = document.getElementById('resolved-reports');
+
+                if (totalEl) totalEl.textContent = total;
+                if (pendingEl) pendingEl.textContent = pending;
+                if (workingEl) workingEl.textContent = working;
+                if (resolvedEl) resolvedEl.textContent = resolved;
+
+                console.log('Stats updated:', { total, pending, working, resolved });
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
+        }
+
+        function displayReports(reports) {
+            console.log('displayReports called with:', reports.length, 'reports');
+
+            const container = document.getElementById('reports-container');
+            if (!container) {
+                console.error('Container not found!');
+                return;
+            }
+
+            const count = document.getElementById('reports-count');
+            if (count) {
+                count.textContent = `${reports.length} reports`;
+            }
+
+            if (!reports || reports.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">No reports found.</div>';
+                return;
+            }
+
+            let html = '<div style="display: grid; gap: 20px;">';
+            reports.forEach(report => {
+                const location = report.location || 'No location';
+                const status = report.status || 'Pending';
+                html += `
+                    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+                        <div style="display: flex; gap: 15px;">
+                            ${report.image ? `
+                            <img src="${API_BASE_URL}/${report.image}" alt="Pothole" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
+                            ` : `
+                            <div style="width: 80px; height: 80px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #999;">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            `}
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 8px 0;">${location}</h4>
+                                <p style="margin: 4px 0;">Name: ${report.name || 'Unknown'}</p>
+                                <p style="margin: 4px 0;">Phone: ${report.phone || 'N/A'}</p>
+                                <p style="margin: 4px 0;">Status: <span style="color: ${status === 'Pending' ? '#f59e0b' : status === 'Working' ? '#3b82f6' : '#10b981'}; font-weight: 600;">${status}</span></p>
+                                <p style="margin: 4px 0; color: #666; font-size: 14px;">Date: ${new Date(report.date).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <button style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; flex: 1;" onclick="viewReport(${report.id})">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                            <button style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; flex: 1;" onclick="updateReport(${report.id})">
+                                <i class="fas fa-edit"></i> Update Status
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            container.innerHTML = html;
+            console.log('Reports displayed successfully');
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        function applyFilters() {
+            const statusFilter = document.getElementById('status-filter').value;
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const dateFilter = document.getElementById('date-filter').value;
+
+            let filtered = allReports;
+
+            // Status filter
+            if (statusFilter) {
+                filtered = filtered.filter(r => r.status === statusFilter);
+            }
+
+            // Search filter
+            if (searchTerm) {
+                filtered = filtered.filter(r =>
+                    r.location.toLowerCase().includes(searchTerm) ||
+                    r.name.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            // Date filter
+            if (dateFilter) {
+                const now = new Date();
+                const filterDate = new Date();
+
+                switch (dateFilter) {
+                    case 'today':
+                        filterDate.setHours(0, 0, 0, 0);
+                        break;
+                    case 'week':
+                        filterDate.setDate(now.getDate() - 7);
+                        break;
+                    case 'month':
+                        filterDate.setMonth(now.getMonth() - 1);
+                        break;
+                }
+
+                filtered = filtered.filter(r => new Date(r.date) >= filterDate);
+            }
+
+            displayReports(filtered);
+        }
+
+        function viewReport(reportId) {
+            const report = allReports.find(r => r.id === reportId);
+            if (!report) return;
+
+            const modal = document.getElementById('reportModal');
+            const body = document.getElementById('modal-body');
+
+            body.innerHTML = `
+                <div class="report-detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Location:</span>
+                        <span class="detail-value">${report.location}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Reporter:</span>
+                        <span class="detail-value">${report.name}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Contact:</span>
+                        <span class="detail-value">${report.phone}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value status-${report.status.toLowerCase()} report-status">${report.status}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Reported Date:</span>
+                        <span class="detail-value">${new Date(report.date).toLocaleString('en-IN')}</span>
+                    </div>
+                    ${report.assignedOfficer ? `
+                    <div class="detail-item">
+                        <span class="detail-label">Assigned Officer:</span>
+                        <span class="detail-value">${report.assignedOfficer.name} (${report.assignedOfficer.department})</span>
+                    </div>
+                    ` : ''}
+                    ${report.lastModified ? `
+                    <div class="detail-item">
+                        <span class="detail-label">Last Modified:</span>
+                        <span class="detail-value">${new Date(report.lastModified).toLocaleString('en-IN')}</span>
+                    </div>
+                    ` : ''}
+                </div>
+                ${report.image ? `
+                <div style="margin-top: 20px;">
+                    <h4><i class="fas fa-image"></i> Reported Photo</h4>
+                    <img src="${API_BASE_URL}/${report.image}" alt="Pothole" class="report-image" style="max-width: 100%; height: auto; border-radius: 10px; border: 2px solid #e5e7eb;">
+                </div>
+                ` : `
+                <div style="margin-top: 20px; padding: 20px; background: #fef3c7; border-radius: 10px; color: #92400e;">
+                    <i class="fas fa-warning"></i> No image available for this report
+                </div>
+                `}
+                ${report.notes && report.notes.length > 0 ? `
+                <div style="margin-top: 20px;">
+                    <h4>Notes:</h4>
+                    ${report.notes.map(note => `
+                        <div style="background: #f8fafc; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid var(--admin-primary);">
+                            <small>${new Date(note.timestamp).toLocaleString('en-IN')}</small>
+                            <p style="margin: 5px 0 0 0;">${note.text}</p>
+                        </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+            `;
+
+            modal.classList.add('show');
+        }
+
+        function updateReport(reportId) {
+            const report = allReports.find(r => r.id === reportId);
+            if (!report) return;
+
+            // Set the current report ID for updating
+            window.currentReportId = reportId;
+
+            const modal = document.getElementById('reportModal');
+            const body = document.getElementById('modal-body');
+
+            body.innerHTML = `
+                <div class="report-detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Location:</span>
+                        <span class="detail-value">${report.location}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Reporter:</span>
+                        <span class="detail-value">${report.name}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Current Status:</span>
+                        <span class="detail-value status-${report.status.toLowerCase()} report-status">${report.status}</span>
+                    </div>
+
+                    ${report.repairTracking ? `
+                    <div class="repair-tracking-section">
+                        <h4>🔥 Live Repair Tracking</h4>
+                        <div class="repair-progress">
+                            ${report.repairTracking.steps.map(step => `
+                                <div class="repair-step ${step.status}">
+                                    <div class="step-icon">${step.status === 'completed' ? '✅' : step.status === 'current' ? '🔄' : '⏳'}</div>
+                                    <div class="step-name">${step.name}</div>
+                                    ${step.timestamp ? `<div class="step-time">${new Date(step.timestamp).toLocaleString('en-IN')}</div>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="step-controls">
+                            <button onclick="updateRepairStep(${report.id}, 2)" ${report.repairTracking.currentStep >= 2 ? 'disabled' : ''}>👮 Assign Officer</button>
+                            <button onclick="updateRepairStep(${report.id}, 3)" ${report.repairTracking.currentStep >= 3 ? 'disabled' : ''}>🚶 Worker Reached</button>
+                            <button onclick="updateRepairStep(${report.id}, 4)" ${report.repairTracking.currentStep >= 4 ? 'disabled' : ''}>📦 Material Arriving</button>
+                            <button onclick="updateRepairStep(${report.id}, 5)" ${report.repairTracking.currentStep >= 5 ? 'disabled' : ''}>🔧 Work Started</button>
+                            <button onclick="updateRepairStep(${report.id}, 6)" ${report.repairTracking.currentStep >= 6 ? 'disabled' : ''}>✅ Mark Completed</button>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+
+                ${report.image ? `
+                <div style="margin-top: 20px;">
+                    <h4><i class="fas fa-image"></i> Reported Photo</h4>
+                    <img src="${API_BASE_URL}/${report.image}" alt="Pothole" class="report-image" style="max-width: 100%; height: auto; border-radius: 10px; border: 2px solid #e5e7eb;">
+                </div>
+                ` : ''}
+
+                <div class="update-form">
+                    <h4><i class="fas fa-edit"></i> Update Report</h4>
+
+                    <div class="form-group">
+                        <label for="new-status">New Status:</label>
+                        <select id="new-status">
+                            <option value="Pending" ${report.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Working" ${report.status === 'Working' ? 'selected' : ''}>Working</option>
+                            <option value="Resolved" ${report.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="assign-officer">Assign Officer:</label>
+                        <select id="assign-officer">
+                            <option value="">Select Officer</option>
+                            ${window.officers.map(officer => `
+                                <option value="${officer.id}" ${report.assignedOfficer && report.assignedOfficer.id === officer.id ? 'selected' : ''}>
+                                    ${officer.name} - ${officer.department}
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update-notes">Notes:</label>
+                        <textarea id="update-notes" placeholder="Add notes about this update..."></textarea>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button class="action-btn btn-cancel" onclick="closeModal()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button class="action-btn btn-update" onclick="submitUpdate()">
+                            <i class="fas fa-save"></i> Update Report
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.add('show');
+        }
+
+        async function submitUpdate() {
+            const status = document.getElementById('new-status').value;
+            const officerId = document.getElementById('assign-officer').value;
+            const notes = document.getElementById('update-notes').value.trim();
+
+            if (!status) {
+                const statusEl = document.getElementById('update-status-message');
+                if (statusEl) {
+                    statusEl.textContent = '❌ Please select a status';
+                    statusEl.style.color = '#dc2626';
+                }
+                return;
+            }
+
+            try {
+                const response = await apiCall('/admin/update-report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: currentReportId, status, officerId, notes })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage('Report updated successfully!', 'success');
+                    closeModal();
+                    loadDashboard(); // Reload dashboard
+                } else {
+                    showMessage(result.message || 'Failed to update report', 'error');
+                }
+            } catch (error) {
+                console.error('Update error:', error);
+                showMessage('Network error. Please try again.', 'error');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('reportModal').classList.remove('show');
+        }
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUser');
+            window.location.href = 'index.html';
+        }
+
+        function showMessage(message, type) {
+            // Remove existing messages
+            const existing = document.querySelector('.message-temp');
+            if (existing) existing.remove();
+
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message-temp ${type}`;
+            msgDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 1001;
+                max-width: 400px;
+            `;
+
+            if (type === 'success') {
+                msgDiv.style.background = 'var(--admin-success)';
+            } else {
+                msgDiv.style.background = 'var(--admin-error)';
+            }
+
+            msgDiv.textContent = message;
+            document.body.appendChild(msgDiv);
+
+            setTimeout(() => {
+                msgDiv.remove();
+            }, 5000);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('reportModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Update repair step
+        async function updateRepairStep(reportId, step) {
+            try {
+                const response = await apiCall('/admin/update-report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: reportId, repairStep: step })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage(`Repair step ${step} updated successfully!`, 'success');
+                    // Reload the modal content
+                    viewReport(reportId);
+                    // Reload dashboard to show updated data
+                    loadDashboard();
+                } else {
+                    showMessage(result.message || 'Failed to update repair step', 'error');
+                }
+            } catch (error) {
+                console.error('Repair step update error:', error);
+                showMessage('Network error. Please try again.', 'error');
+            }
+        }
+
+        // Make functions available globally
+        window.submitUpdate = submitUpdate;
+        window.updateRepairStep = updateRepairStep;
+        window.currentReportId = null;
+    </script>
+</body>
+
+</html>

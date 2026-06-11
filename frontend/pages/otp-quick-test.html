@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Quick Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .form-group {
+            margin: 20px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        #demoOtp {
+            font-size: 32px;
+            text-align: center;
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔐 OTP Quick Test</h1>
+
+        <div class="form-group">
+            <label>Phone Number (10 digits):</label>
+            <input type="tel" id="phone" placeholder="9876543210" maxlength="10">
+        </div>
+
+        <button id="sendBtn" onclick="sendOTP()">Send OTP</button>
+
+        <div id="demoOtp"></div>
+
+        <div class="form-group" id="verifySection" style="display: none;">
+            <label>Enter OTP:</label>
+            <input type="text" id="otp" placeholder="Enter 6-digit OTP" maxlength="6">
+            <button onclick="verifyOTP()">Verify OTP</button>
+        </div>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // Show that JavaScript is running
+        window.onload = function () {
+            document.getElementById('status').innerHTML = '✅ Page loaded! JavaScript is working. Enter phone and click Send OTP.';
+            document.getElementById('status').className = 'info';
+            console.log('Page loaded successfully!');
+        };
+
+        const API_URL = 'http://localhost:3000';
+        let currentPhone = '';
+
+        async function sendOTP() {
+            const phone = document.getElementById('phone').value.trim();
+            const status = document.getElementById('status');
+            const demoOtpDiv = document.getElementById('demoOtp');
+            const sendBtn = document.getElementById('sendBtn');
+
+            if (phone.length !== 10) {
+                status.innerHTML = '❌ Please enter a valid 10-digit phone number';
+                status.className = 'error';
+                return;
+            }
+
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Sending...';
+            status.innerHTML = '⏳ Sending OTP...';
+            status.className = 'info';
+
+            try {
+                console.log('Sending OTP to:', phone);
+                const response = await fetch(`${API_URL}/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber: phone })
+                });
+
+                console.log('Response status:', response.status);
+                const result = await response.json();
+                console.log('Response data:', result);
+
+                if (result.success) {
+                    currentPhone = phone;
+                    status.innerHTML = '✅ ' + result.message;
+                    status.className = 'success';
+
+                    if (result.demoOTP) {
+                        demoOtpDiv.innerHTML = '🔑 Demo OTP: <strong>' + result.demoOTP + '</strong>';
+                        demoOtpDiv.style.display = 'block';
+                    }
+
+                    document.getElementById('verifySection').style.display = 'block';
+                } else {
+                    status.innerHTML = '❌ ' + result.message;
+                    status.className = 'error';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                status.innerHTML = '❌ Network Error: ' + error.message + '<br><br>Make sure you opened this page via http://localhost:3000/otp-quick-test.html';
+                status.className = 'error';
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send OTP';
+            }
+        }
+
+        async function verifyOTP() {
+            const otp = document.getElementById('otp').value.trim();
+            const status = document.getElementById('status');
+
+            if (otp.length !== 6) {
+                status.innerHTML = '❌ Please enter a 6-digit OTP';
+                status.className = 'error';
+                return;
+            }
+
+            status.innerHTML = '⏳ Verifying...';
+            status.className = 'info';
+
+            try {
+                const response = await fetch(`${API_URL}/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber: currentPhone, otp: otp })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    status.innerHTML = '🎉 ' + result.message;
+                    status.className = 'success';
+                } else {
+                    status.innerHTML = '❌ ' + result.message;
+                    status.className = 'error';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                status.innerHTML = '❌ Network Error: ' + error.message;
+                status.className = 'error';
+            }
+        }
+    </script>
+</body>
+
+</html>

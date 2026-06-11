@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Validation Test</title>
+</head>
+<body>
+    <h1>Phone Validation Test</h1>
+    <input type="tel" id="phone" placeholder="Enter phone number">
+    <button id="sendBtn" disabled>Send OTP</button>
+    <div id="status"></div>
+
+    <script>
+        console.log("Validation test loaded");
+
+        const phoneInput = document.getElementById('phone');
+        const sendBtn = document.getElementById('sendBtn');
+        const statusDiv = document.getElementById('status');
+
+        phoneInput.addEventListener('input', function() {
+            const phoneNumber = this.value.trim();
+            console.log("Input:", phoneNumber);
+
+            const cleanPhone = phoneNumber.replace(/\s+/g, '');
+            console.log("Clean:", cleanPhone);
+
+            // Same regex as in report.js
+            const isValidPhone = /^\d{10}$/.test(cleanPhone) || /^(\+91|91)?[6-9]\d{9}$/.test(cleanPhone);
+            console.log("Valid:", isValidPhone);
+
+            sendBtn.disabled = !isValidPhone;
+
+            statusDiv.textContent = `Clean: ${cleanPhone}, Valid: ${isValidPhone}`;
+        });
+
+        sendBtn.addEventListener('click', () => {
+            alert('Button works!');
+        });
+    </script>
+</body>
+</html>
+
+
+

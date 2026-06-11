@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minimal OTP Test</title>
+</head>
+<body>
+    <h1>Minimal OTP Test</h1>
+    <input type="tel" id="phone" placeholder="Phone number">
+    <button id="sendBtn">Send OTP</button>
+    <div id="result"></div>
+
+    <script>
+        console.log("Minimal test loaded");
+
+        document.getElementById('sendBtn').addEventListener('click', async () => {
+            console.log("Button clicked");
+            const phone = document.getElementById('phone').value;
+            console.log("Phone:", phone);
+
+            try {
+                const response = await fetch('/send-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber: phone })
+                });
+
+                console.log("Response status:", response.status);
+                const data = await response.json();
+                console.log("Response data:", data);
+
+                document.getElementById('result').textContent = JSON.stringify(data);
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('result').textContent = "Error: " + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+

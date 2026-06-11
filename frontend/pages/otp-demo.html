@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification Demo - RoadWatch</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .demo-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .demo-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .demo-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .demo-header p {
+            opacity: 0.9;
+        }
+
+        .demo-content {
+            padding: 40px;
+        }
+
+        .phone-input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-otp-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-otp-btn:hover:not(:disabled) {
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .send-otp-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: translateY(-50%);
+        }
+
+        .otp-section {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .otp-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .otp-input-group input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+
+        .otp-input-group input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .verify-btn {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .verify-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        .verify-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #065f46;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-message.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #1d4ed8;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .timer {
+            text-align: center;
+            margin-top: 15px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .resend-btn {
+            display: block;
+            margin: 15px auto 0;
+            padding: 8px 16px;
+            background: transparent;
+            color: #667eea;
+            border: 1px solid #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .resend-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .demo-info {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .demo-info h3 {
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .demo-info p {
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #6b7280;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #4b5563;
+        }
+
+        @media (max-width: 600px) {
+            .demo-container {
+                margin: 20px;
+            }
+
+            .demo-content {
+                padding: 20px;
+            }
+
+            .otp-input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1><i class="fas fa-mobile-alt"></i> OTP Verification</h1>
+            <p>Test SMS OTP functionality</p>
+        </div>
+
+        <div class="demo-content">
+            <div class="demo-info">
+                <h3><i class="fas fa-info-circle"></i> Demo Mode Active</h3>
+                <p>OTP will be displayed on screen instead of sending SMS</p>
+                <p>For production, configure Twilio credentials in otp-config.js</p>
+                <p>Demo OTP appears after clicking "Send OTP"</p>
+            </div>
+
+            <div class="phone-input-section">
+                <div class="input-group">
+                    <input type="tel" id="demoPhone" placeholder="Enter phone number (10 digits)" maxlength="10">
+                    <button type="button" id="demoSendOtp" class="send-otp-btn" disabled>Send OTP</button>
+                </div>
+            </div>
+
+            <div id="demoOtpSection" class="otp-section">
+                <div class="otp-input-group">
+                    <input type="text" id="demoOtpInput" placeholder="000000" maxlength="6">
+                    <button type="button" id="demoVerifyBtn" class="verify-btn" disabled>Verify</button>
+                </div>
+
+                <div id="demoStatus" class="status-message"></div>
+
+                <div id="demoTimer" class="timer" style="display: none;">
+                    Resend OTP in <span id="demoTimerCount">60</span> seconds
+                </div>
+
+                <button type="button" id="demoResendBtn" class="resend-btn" style="display: none;">Resend OTP</button>
+            </div>
+
+            <a href="report.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Report Form
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // OTP Demo functionality
+        let demoOtpCode = '';
+        let demoTimer = null;
+
+        const phoneInput = document.getElementById('demoPhone');
+        const sendOtpBtn = document.getElementById('demoSendOtp');
+        const otpSection = document.getElementById('demoOtpSection');
+        const otpInput = document.getElementById('demoOtpInput');
+        const verifyBtn = document.getElementById('demoVerifyBtn');
+        const statusDiv = document.getElementById('demoStatus');
+        const timerDiv = document.getElementById('demoTimer');
+        const timerCount = document.getElementById('demoTimerCount');
+        const resendBtn = document.getElementById('demoResendBtn');
+
+        // Phone validation
+        phoneInput.addEventListener('input', function() {
+            const phone = this.value.trim();
+            const isValid = /^\d{10}$/.test(phone);
+            sendOtpBtn.disabled = !isValid;
+        });
+
+        // Send OTP
+        sendOtpBtn.addEventListener('click', async function() {
+            const phoneNumber = phoneInput.value.trim();
+
+            sendOtpBtn.disabled = true;
+            sendOtpBtn.textContent = 'Sending...';
+
+            try {
+                const response = await fetch('/send-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    otpSection.style.display = 'block';
+                    showStatus('OTP sent successfully!', 'success');
+
+                    if (result.demoOTP) {
+                        demoOtpCode = result.demoOTP;
+                        showStatus(`Demo OTP: ${demoOtpCode} (Valid for 5 minutes)`, 'info');
+                    }
+
+                    startTimer();
+                } else {
+                    showStatus(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('Failed to send OTP', 'error');
+            } finally {
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.textContent = 'Send OTP';
+            }
+        });
+
+        // OTP input validation
+        otpInput.addEventListener('input', function() {
+            const otp = this.value.trim();
+            verifyBtn.disabled = otp.length !== 6;
+        });
+
+        // Verify OTP
+        verifyBtn.addEventListener('click', async function() {
+            const otp = otpInput.value.trim();
+
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'Verifying...';
+
+            try {
+                const response = await fetch('/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phoneNumber: phoneInput.value.trim(),
+                        otp: otp
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatus('✅ Phone number verified successfully!', 'success');
+                    otpSection.style.display = 'none';
+                    phoneInput.disabled = true;
+                    sendOtpBtn.disabled = true;
+                    sendOtpBtn.textContent = 'Verified ✓';
+                    sendOtpBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                } else {
+                    showStatus(result.message, 'error');
+                    otpInput.value = '';
+                    verifyBtn.disabled = true;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('Verification failed', 'error');
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify';
+            }
+        });
+
+        // Resend OTP
+        resendBtn.addEventListener('click', function() {
+            sendOtpBtn.click();
+        });
+
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message ${type}`;
+        }
+
+        function startTimer() {
+            let timeLeft = 60;
+            timerDiv.style.display = 'block';
+            resendBtn.style.display = 'none';
+
+            if (demoTimer) clearInterval(demoTimer);
+
+            demoTimer = setInterval(() => {
+                timerCount.textContent = timeLeft;
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(demoTimer);
+                    timerDiv.style.display = 'none';
+                    resendBtn.style.display = 'block';
+                }
+            }, 1000);
+        }
+
+        // Auto-fill demo phone number for testing
+        phoneInput.value = '9876543210';
+        sendOtpBtn.disabled = false;
+    </script>
+</body>
+</html>
+
+
+
+
+

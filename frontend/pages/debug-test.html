@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Test</title>
+</head>
+<body>
+    <h2>Debug Test</h2>
+    <p>Check console for debug messages</p>
+
+    <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <div class="phone-input-wrapper">
+            <input type="tel" id="phone" name="phone" placeholder="Enter phone number" required />
+            <button type="button" id="sendOtpBtn" disabled>Send OTP</button>
+        </div>
+    </div>
+
+    <script>
+        console.log("Debug script loaded");
+
+        // Test if DOMContentLoaded works
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOMContentLoaded fired");
+        });
+
+        // Test immediate execution
+        console.log("Script executing immediately");
+
+        // Test if elements exist
+        setTimeout(() => {
+            const phoneInput = document.getElementById("phone");
+            const sendOtpBtn = document.getElementById("sendOtpBtn");
+
+            console.log("Phone input element:", phoneInput);
+            console.log("Send OTP button element:", sendOtpBtn);
+
+            if (phoneInput && sendOtpBtn) {
+                console.log("Elements found, attaching event listeners");
+
+                phoneInput.addEventListener("input", function() {
+                    console.log("Phone input event fired, value:", this.value);
+                    const phoneNumber = this.value.trim();
+                    const cleanPhone = phoneNumber.replace(/\s+/g, '');
+                    const isValidPhone = /^\d{10}$/.test(cleanPhone) || /^(\+91|91)?[6-9]\d{9}$/.test(cleanPhone);
+
+                    console.log("Phone validation - number:", phoneNumber, "clean:", cleanPhone, "valid:", isValidPhone);
+                    sendOtpBtn.disabled = !isValidPhone;
+                });
+
+                sendOtpBtn.addEventListener("click", function() {
+                    console.log("Send OTP button clicked");
+                    alert("Button clicked successfully!");
+                });
+            } else {
+                console.error("Elements not found!");
+            }
+        }, 100);
+    </script>
+</body>
+</html>
+
+
+
