@@ -778,8 +778,9 @@
                 `).join('')}
               </div>
               ` : ''}
-              <img src="${report.image}" alt="Pothole at ${report.location}"
-                   onerror="this.src='https://via.placeholder.com/400x220/f5f5f5/636e72?text=Image+Not+Found'">
+              <img src="${API_BASE_URL}${report.image}" alt="Pothole at ${report.location}"
+                   onerror="if(this.src) this.style.display='none'; var div=document.createElement('div'); div.style.cssText='display:flex;align-items:center;justify-content:center;height:220px;background:#f5f5f5;color:#636e72;font-weight:bold;'; div.textContent='No Image Available'; this.parentElement.replaceChild(div, this);"
+                   style="max-width:100%;height:auto;border-radius:8px;">
             </div>
           `;
         });

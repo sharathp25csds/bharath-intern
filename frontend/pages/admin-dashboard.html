@@ -875,7 +875,7 @@
                     <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
                         <div style="display: flex; gap: 15px;">
                             ${report.image ? `
-                            <img src="${API_BASE_URL}/${report.image}" alt="Pothole" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
+                            <img src="${API_BASE_URL}${report.image}" alt="Pothole" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
                             ` : `
                             <div style="width: 80px; height: 80px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #999;">
                                 <i class="fas fa-image"></i>
@@ -1003,7 +1003,7 @@
                 ${report.image ? `
                 <div style="margin-top: 20px;">
                     <h4><i class="fas fa-image"></i> Reported Photo</h4>
-                    <img src="${API_BASE_URL}/${report.image}" alt="Pothole" class="report-image" style="max-width: 100%; height: auto; border-radius: 10px; border: 2px solid #e5e7eb;">
+                    <img src="${API_BASE_URL}${report.image}" alt="Pothole" class="report-image" style="max-width: 100%; height: auto; border-radius: 10px; border: 2px solid #e5e7eb;">
                 </div>
                 ` : `
                 <div style="margin-top: 20px; padding: 20px; background: #fef3c7; border-radius: 10px; color: #92400e;">
@@ -1077,7 +1077,7 @@
                 ${report.image ? `
                 <div style="margin-top: 20px;">
                     <h4><i class="fas fa-image"></i> Reported Photo</h4>
-                    <img src="${API_BASE_URL}/${report.image}" alt="Pothole" class="report-image" style="max-width: 100%; height: auto; border-radius: 10px; border: 2px solid #e5e7eb;">
+                    <img src="${API_BASE_URL}${report.image}" alt="Pothole" class="report-image" style="max-width: 100%; height: auto; border-radius: 10px; border: 2px solid #e5e7eb;">
                 </div>
                 ` : ''}
 
